@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Trading Research Assistant | Structured Hypothesis Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css?v=3">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top Navigation Header -->
+    <header class="top-nav">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+            <polyline points="16 7 22 7 22 13"></polyline>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Antigravity Trading Labs</span>
+          <span class="brand-subtitle">AI Research Assistant &bull; Mini Prototype</span>
+        </div>
+      </div>
+
+      <div class="nav-badges">
+        <button id="btn-toggle-memory" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 6px 14px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <span id="memory-counter-text">Research Memory (0)</span>
+        </button>
+        <span class="badge badge-pill badge-glow">Schema-First</span>
+        <span class="badge badge-pill badge-neutral">Epistemic Rigor</span>
+      </div>
+    </header>
+
+    <!-- 4-Step Stepper Header -->
+    <nav class="stepper-nav" aria-label="Workflow progress">
+      <div class="step-item active" id="step-nav-1">
+        <div class="step-circle">1</div>
+        <div class="step-label">
+          <span class="step-title">Ask</span>
+          <span class="step-desc">Natural Query</span>
+        </div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item" id="step-nav-2">
+        <div class="step-circle">2</div>
+        <div class="step-label">
+          <span class="step-title">Clarify</span>
+          <span class="step-desc">Gap Resolution</span>
+        </div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item" id="step-nav-3">
+        <div class="step-circle">3</div>
+        <div class="step-label">
+          <span class="step-title">Define</span>
+          <span class="step-desc">Experiment Card</span>
+        </div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item" id="step-nav-4">
+        <div class="step-circle">4</div>
+        <div class="step-label">
+          <span class="step-title">Test</span>
+          <span class="step-desc">Data vs. Conclusion</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content Flow -->
+    <main class="main-content">
+
+      <!-- ================= STEP 1: ASK ================= -->
+      <section id="step-view-1" class="step-card active-card">
+        <div class="card-header">
+          <div>
+            <h2>What trading hypothesis would you like to test?</h2>
+            <p class="section-desc">
+              State your market observation in plain English. The AI extractor will deliberately flag what is missing or ambiguous rather than papering over gaps with silent assumptions.
+            </p>
+          </div>
+        </div>
+
+        <div class="input-container">
+          <label for="query-input" class="sr-only">Research Hypothesis</label>
+          <textarea 
+            id="query-input" 
+            rows="3" 
+            placeholder="e.g. Does buying NIFTY after a sharp fall work better during high-volatility periods?"
+          ></textarea>
+          
+          <div class="input-actions">
+            <div class="prompt-hint">
+              <span class="hint-label">Try sample queries:</span>
+              <div class="sample-chips" id="sample-chips-container">
+                <!-- Injected dynamically from /api/templates -->
+              </div>
+            </div>
+
+            <button id="btn-parse-query" class="btn btn-primary">
+              <span>Extract & Detect Gaps</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Principles Callout -->
+        <div class="core-principles-banner">
+          <div class="principle-item">
+            <div class="p-icon">🎯</div>
+            <div class="p-text">
+              <strong>Explicit Nullability</strong>
+              <span>Parameters not explicitly quantified are returned as <code>null</code>, not fabricated.</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="p-icon">⚖️</div>
+            <div class="p-text">
+              <strong>Deterministic Validation</strong>
+              <span>Missing fields trigger structured questions with severity levels (required vs optional).</span>
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="p-icon">🔍</div>
+            <div class="p-text">
+              <strong>Epistemic Rigor</strong>
+              <span>Distinguishes empirical data ("58% win rate") from scientific conclusion ("edge or noise?").</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= STEP 2: CLARIFY ================= -->
+      <section id="step-view-2" class="step-card hidden">
+        <div class="card-header">
+          <div>
+            <div class="badge-status-line">
+              <span class="badge badge-warning">⚠ Ambiguity & Missing Parameters Detected</span>
+              <span class="badge badge-neutral" id="gaps-count-badge">0 Gaps to Resolve</span>
+            </div>
+            <h2>Make Incompleteness Visible</h2>
+            <p class="section-desc">
+              A naive chatbot guesses; an AI research assistant identifies what you left unstated. Select or enter concrete specifications below.
+            </p>
+          </div>
+        </div>
+
+        <div class="clarification-layout">
+          <!-- Left: Gaps Resolution Form -->
+          <div class="gaps-form-container">
+            <div id="gaps-list" class="gaps-list">
+              <!-- Dynamically populated gaps -->
+            </div>
+
+            <div class="form-footer-actions">
+              <button id="btn-back-step-1" class="btn btn-secondary">
+                &larr; Back to Query
+              </button>
+              <button id="btn-apply-clarifications" class="btn btn-primary">
+                Confirm & Build Experiment Card &rarr;
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Conservative Assumptions Sidebar -->
+          <aside class="assumptions-panel">
+            <div class="panel-header">
+              <h3>Conservative Assumptions</h3>
+              <span class="badge badge-subtle">Auto-Documented</span>
+            </div>
+            <p class="panel-desc">
+              To prevent hidden bias, the system explicitly logs all default research constraints:
+            </p>
+
+            <ul class="assumptions-list" id="assumptions-list">
+              <!-- Populated from backend assumptions -->
+            </ul>
+
+            <div class="panel-box-info">
+              <strong>Why explicit assumptions?</strong>
+              <p>Hiding transaction costs or survivorship assumptions creates illusory backtest profits. We make all friction transparent.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ================= STEP 3: DEFINE ================= -->
+      <section id="step-view-3" class="step-card hidden">
+        <div class="card-header">
+          <div>
+            <span class="badge badge-success">✓ Fully Specified Experiment</span>
+            <h2>Structured Experiment Specification</h2>
+            <p class="section-desc">
+              All ambiguous terms have been pinned to measurable mathematical definitions. Review the formal hypothesis below.
+            </p>
+          </div>
+        </div>
+
+        <div class="experiment-card-view">
+          <div class="exp-meta-header">
+            <div class="exp-title-box">
+              <span class="meta-label">INSTRUMENT & TIMEFRAME</span>
+              <div class="meta-values">
+                <span class="highlight-asset" id="exp-instrument-val">NIFTY</span>
+                <span class="badge badge-neutral" id="exp-timeframe-val">Daily</span>
+              </div>
+            </div>
+
+            <div class="exp-status-box">
+              <span class="meta-label">STATUS</span>
+              <span class="badge badge-ready">Ready for Testing</span>
+            </div>
+          </div>
+
+          <!-- Hypothesis Banner -->
+          <div class="hypothesis-banner">
+            <span class="hypo-label">FORMAL HYPOTHESIS:</span>
+            <p class="hypo-text" id="exp-hypothesis-val">
+              Loading hypothesis statement...
+            </p>
+          </div>
+
+          <!-- Parameters Grid -->
+          <div class="parameters-grid">
+            <div class="param-box">
+              <span class="param-title">ENTRY TRIGGER</span>
+              <div class="param-val" id="exp-entry-val">Close drops &gt;= 1.0%</div>
+              <span class="param-sub" id="exp-entry-type">Type: price_drop</span>
+            </div>
+
+            <div class="param-box">
+              <span class="param-title">REGIME FILTER</span>
+              <div class="param-val" id="exp-filter-val">High Volatility (India VIX &gt; 20)</div>
+              <span class="param-sub">Evaluated at prior confirmed close</span>
+            </div>
+
+            <div class="param-box">
+              <span class="param-title">EXIT MECHANISM</span>
+              <div class="param-val" id="exp-exit-val">Time-based (Hold for 5 days)</div>
+              <span class="param-sub" id="exp-exit-type">Type: time</span>
+            </div>
+
+            <div class="param-box">
+              <span class="param-title">HOLDING DURATION</span>
+              <div class="param-val" id="exp-holding-val">5 Trading Days</div>
+              <span class="param-sub">Fixed exit on day close</span>
+            </div>
+          </div>
+
+          <!-- Raw Query vs Extracted Comparison -->
+          <div class="query-trace-box">
+            <div class="trace-row">
+              <span class="trace-label">Original Question:</span>
+              <span class="trace-content" id="exp-raw-query"></span>
+            </div>
+            <div class="trace-row">
+              <span class="trace-label">Ambiguous Terms Resolved:</span>
+              <div class="trace-tags" id="exp-resolved-tags"></div>
+            </div>
+          </div>
+
+          <!-- Action Bar -->
+          <div class="exp-actions">
+            <button id="btn-edit-clarifications" class="btn btn-secondary">
+              &larr; Re-adjust Parameters
+            </button>
+            <button id="btn-run-test" class="btn btn-primary btn-large">
+              <span>Execute 10-Year Backtest (2015–2024)</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= STEP 4: TEST & ANALYZE ================= -->
+      <section id="step-view-4" class="step-card hidden">
+        <div class="card-header">
+          <div>
+            <span class="badge badge-neutral">Empirical Backtest Results</span>
+            <h2>Quantitative Performance & Analytical Rigor</h2>
+            <p class="section-desc">
+              Tested on 10 years of NIFTY & India VIX daily market regimes (2015–2024) incorporating realistic slippage and transaction costs.
+            </p>
+          </div>
+        </div>
+
+        <!-- Key Metrics Cards -->
+        <div class="metrics-summary-grid">
+          <div class="metric-card">
+            <span class="metric-label">QUALIFIED TRADES</span>
+            <span class="metric-value" id="res-trades">0</span>
+            <span class="metric-sub">Across 2,470 bars</span>
+          </div>
+
+          <div class="metric-card">
+            <span class="metric-label">WIN RATE</span>
+            <span class="metric-value text-emerald" id="res-win-rate">0%</span>
+            <span class="metric-sub" id="res-win-count">0 wins / 0 losses</span>
+          </div>
+
+          <div class="metric-card">
+            <span class="metric-label">AVG NET RETURN</span>
+            <span class="metric-value" id="res-avg-return">+0.0%</span>
+            <span class="metric-sub">Per 5-day trade</span>
+          </div>
+
+          <div class="metric-card">
+            <span class="metric-label">MAX DRAWDOWN</span>
+            <span class="metric-value text-rose" id="res-drawdown">-0.0%</span>
+            <span class="metric-sub">Peak to trough</span>
+          </div>
+
+          <div class="metric-card">
+            <span class="metric-label">SHARPE RATIO</span>
+            <span class="metric-value" id="res-sharpe">0.0</span>
+            <span class="metric-sub" id="res-profit-factor">Profit Factor: 0.0</span>
+          </div>
+        </div>
+
+        <!-- Equity Curve Chart -->
+        <div class="chart-container-box">
+          <div class="chart-header">
+            <div class="chart-title-area">
+              <h3>Equity Curve Comparison (Initial: ₹100,000)</h3>
+              <div class="chart-legend">
+                <span class="legend-item"><span class="dot dot-strategy"></span> Strategy (Net Friction)</span>
+                <span class="legend-item"><span class="dot dot-benchmark"></span> NIFTY Buy & Hold</span>
+              </div>
+            </div>
+            <div class="chart-tag" id="chart-tag-summary">10-Year Horizon</div>
+          </div>
+
+          <div class="svg-chart-wrapper" id="chart-wrapper">
+            <svg id="equity-svg" width="100%" height="260" preserveAspectRatio="none">
+              <!-- Generated dynamically via JS -->
+            </svg>
+          </div>
+        </div>
+
+        <!-- ================= THE CORE INTELLECTUAL FEATURE: DATA VS CONCLUSION ================= -->
+        <div class="epistemic-section">
+          <div class="epistemic-header">
+            <div class="badge badge-accent">Intellectual Core</div>
+            <h3>What the Data Shows vs. What We Can Conclude</h3>
+            <p>
+              A 58% win rate is an empirical fact; assuming it proves a tradeable edge is an epistemic fallacy.
+            </p>
+          </div>
+
+          <div class="epistemic-columns">
+            <!-- Left: What Data Shows -->
+            <div class="epistemic-col col-data">
+              <div class="col-title">
+                <span class="col-icon">📊</span>
+                <h4>What the Data Shows (Empirical Facts)</h4>
+              </div>
+              <ul class="epistemic-list" id="epistemic-data-list">
+                <!-- Dynamic items -->
+              </ul>
+            </div>
+
+            <!-- Right: What We Conclude -->
+            <div class="epistemic-col col-conclusion">
+              <div class="col-title">
+                <span class="col-icon">⚖️</span>
+                <h4>What We Conclude (Critical Analysis & Biases)</h4>
+              </div>
+              <ul class="epistemic-list" id="epistemic-conclusion-list">
+                <!-- Dynamic items -->
+              </ul>
+            </div>
+          </div>
+
+          <!-- Sensitivity Analysis Table -->
+          <div class="sensitivity-box">
+            <h4>Parameter Sensitivity Check (Overfitting Guard)</h4>
+            <p class="sensitivity-desc">
+              If an edge only exists at exactly &gt;= 1.0% drop and collapses at 0.8% or 1.2%, it is curve-fitted noise rather than a robust market phenomenon.
+            </p>
+            <div class="table-responsive">
+              <table class="sensitivity-table">
+                <thead>
+                  <tr>
+                    <th>Tested Threshold</th>
+                    <th>Trade Count</th>
+                    <th>Win Rate</th>
+                    <th>Avg Net Return</th>
+                    <th>Robustness Assessment</th>
+                  </tr>
+                </thead>
+                <tbody id="sensitivity-tbody">
+                  <!-- Dynamic rows -->
+                </tbody>
+              </table>
+            </div>
+          <!-- What Should We Investigate Next? (Page 9 Requirement) -->
+          <div class="next-questions-box" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-subtle);">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+              <span class="badge badge-glow">Learning Loop</span>
+              <h4 style="color: #fff; font-size: 1.05rem;">What Should We Investigate Next?</h4>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">
+              The system recommends the following subsequent hypotheses to test the resilience of this edge:
+            </p>
+            <div class="sample-chips" id="recommended-next-container">
+              <!-- Dynamically populated from epistemic_analysis.recommended_next_steps -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Bias Warnings Grid -->
+        <div class="bias-warnings-container">
+          <h4>Pre-Mortem: What Could Still Go Wrong?</h4>
+          <div class="bias-grid" id="bias-grid">
+            <!-- Dynamic bias cards -->
+          </div>
+        </div>
+
+        <!-- Reset / New Hypothesis Actions -->
+        <div class="results-actions">
+          <div style="display: flex; gap: 12px;">
+            <button id="btn-save-memory" class="btn btn-secondary" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              Save to Research Memory
+            </button>
+            <button id="btn-export-json" class="btn btn-secondary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export JSON
+            </button>
+          </div>
+          <button id="btn-new-test" class="btn btn-primary">
+            Start New Research Hypothesis &rarr;
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Research Memory Modal (What the System Learned) -->
+    <div id="memory-modal" class="memory-modal-overlay hidden" style="display: none;">
+      <div style="background: var(--bg-secondary); border: 1px solid var(--border-card); border-radius: var(--radius-xl); max-width: 750px; width: 90%; max-height: 85vh; overflow-y: auto; padding: 32px; box-shadow: var(--glow-card); position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div>
+            <span class="badge badge-pill badge-glow">System Memory</span>
+            <h3 style="color: #fff; font-size: 1.4rem; margin-top: 4px;">Research Knowledge Base</h3>
+          </div>
+          <button id="btn-close-memory" class="btn btn-secondary" style="padding: 6px 14px; cursor: pointer;">✕ Close</button>
+        </div>
+        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 20px;">
+          Chronological record of structured experiments and key empirical takeaways saved across research sessions.
+        </p>
+        <div id="memory-entries-list" style="display: flex; flex-direction: column; gap: 16px;">
+          <!-- Populated from localStorage -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Footer -->
+    <footer class="global-footer">
+      <p>Built with Next-Gen Quantitative Product Thinking &bull; Zod / Pydantic Schema First &bull; Zero Silent Assumptions</p>
+    </footer>
+
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
